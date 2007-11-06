@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+
+
+
+
+
+
+<html>
+  <head>
+    <title>Maven AntRun extended plugin - Usage</title>
+    <style type="text/css" media="all">
+      @import url("./css/maven-base.css");
+      @import url("./css/maven-theme.css");
+      @import url("./css/site.css");
+    </style>
+    <link rel="stylesheet" href="./css/print.css" type="text/css" media="print" />
+          <meta name="author" content="Kenney Westerhof" />
+        <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+      </head>
+  <body class="composite">
+    <!-- TODO: move this into JavaScript to patch the skin
+      <div class="xright">      <a href="http://maven.apache.org/maven2/">Maven 2</a>
+          |
+          <a href="http://ant.apache.org/">Ant</a>
+      </div>
+    -->
+    <div id="leftColumn">
+      <div id="navcolumn">
+             <dl class=navgroup>
+        <dt>Overview</dt>
+        <dd><ul>
+              
+    <li class="none">
+              <a href="introduction.html">Introduction</a>
+        </li>
+              
+    <li class="none">
+              <strong>Usage</strong>
+        </li>
+          </ul></dd>
+    </dl>
+      <dl class=navgroup>
+        <dt>Project Documentation</dt>
+        <dd><ul>
+              
+                
+              
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+              
+        <li class="collapsed">
+              <a href="project-info.html">Project Information</a>
+              </li>
+          </ul></dd>
+    </dl>
+        </div>
+      <script>
+        // replace the java.net project tools with the navigation bar from Maven.
+        // also get rid of "Get Involved" thingie too, while we are at it
+        var pt = document.getElementById("projecttools");
+        var nv = document.getElementById("navcolumn");
+        
+        while(pt.previousSibling!=null)
+          pt.parentNode.removeChild(pt.previousSibling);
+        
+        pt.parentNode.insertBefore(nv,pt);
+        pt.parentNode.removeChild(pt);
+      </script>
+      <script>
+        // kill "description" h3 bar
+        var ld = document.getElementById("longdescription");
+        if(ld!=null) {
+          for( n=ld.firstChild; n!=null; n=n.nextSibling ) {
+            if(n.nodeType==1 && n.innerHTML=="Description" ) {
+              n.parentNode.removeChild(n);
+              break;
+            }
+          }
+        }
+      </script>
+    </div>
+    <div id="bodyColumn">
+      <div id="contentBox">
+        <div class="section"><h2>Usage</h2><p>For those of you unfamiliar with configuring a plugin see the example below:</p><div class="source"><pre>&lt;project&gt;
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+  &lt;artifactId&gt;my-test-app&lt;/artifactId&gt;
+  &lt;groupId&gt;my-test-group&lt;/groupId&gt;
+  &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+
+  &lt;build&gt;
+    &lt;plugins&gt;
+
+      &lt;plugin&gt;
+        &lt;artifactId&gt;maven-antrun-plugin&lt;/artifactId&gt;
+        &lt;executions&gt;
+          &lt;execution&gt;
+            &lt;phase&gt;generate-sources&lt;/phase&gt;
+            &lt;configuration&gt;
+              &lt;tasks&gt;
+
+                &lt;!--
+                  Place any ant task here. You can add anything
+                  you can add between &lt;target&gt; and &lt;/target&gt; in a
+                  build.xml.
+                --&gt;
+                
+              &lt;/tasks&gt;
+            &lt;/configuration&gt;
+            &lt;goals&gt;
+              &lt;goal&gt;run&lt;/goal&gt;
+            &lt;/goals&gt;
+          &lt;/execution&gt;
+        &lt;/executions&gt;
+      &lt;/plugin&gt;
+
+    &lt;/plugins&gt;
+  &lt;/build&gt;
+&lt;/project&gt;</pre></div><p>The example above illustrates how to bind an ant script to a lifecycle phase. You can add a script to each lifecycle phase, by duplicating the <tt>&lt;execution/&gt;</tt> section and specifying a new phase.</p><p>You can use these classpath references:</p><ul><li><tt>maven.dependency.classpath</tt></li><li><tt>maven.compile.classpath</tt></li><li><tt>maven.runtime.classpath</tt></li><li><tt>maven.test.classpath</tt></li><li><tt>maven.plugin.classpath</tt><p>Below you can see how to indicate that ant has generated some more java source that needs to be included in the compilation phase. Note that the compile phase follows the generate-sources phase in the lifecycle.</p><div class="source"><pre>&lt;project&gt;
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+  &lt;artifactId&gt;my-test-app&lt;/artifactId&gt;
+  &lt;groupId&gt;my-test-group&lt;/groupId&gt;
+  &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+
+  &lt;build&gt;
+    &lt;plugins&gt;
+
+      &lt;plugin&gt;
+        &lt;artifactId&gt;maven-antrun-plugin&lt;/artifactId&gt;
+        &lt;executions&gt;
+          &lt;execution&gt;
+            &lt;phase&gt;generate-sources&lt;/phase&gt;
+            &lt;configuration&gt;
+              &lt;tasks&gt;
+
+                &lt;!--
+                  Place any ant task here. You can add anything
+                  you can add between &lt;target&gt; and &lt;/target&gt; in a
+                  build.xml.
+                --&gt;
+
+              &lt;/tasks&gt;
+              &lt;sourceRoot&gt;${project.build.directory}/generated-sources/main/java&lt;/sourceRoot&gt;
+              &lt;testSourceRoot&gt;${project.build.directory}/generated-sources/test/java&lt;/testSourceRoot&gt;
+            &lt;/configuration&gt;
+            &lt;goals&gt;
+              &lt;goal&gt;run&lt;/goal&gt;
+            &lt;/goals&gt;
+          &lt;/execution&gt;
+        &lt;/executions&gt;
+      &lt;/plugin&gt;
+
+    &lt;/plugins&gt;
+  &lt;/build&gt;
+&lt;/project&gt;</pre></div><p>Of course, you can put whatever folder you prefer. The folders in the example above are handy because they are deleted when you &quot;clean&quot; since they are in the build directory (which is, by default, &quot;target&quot;). </p><p><tt>&lt;sourceRoot/&gt;</tt> adds a single folder to the list of folders that get compiled with the program source code (compile).</p><p><tt>&lt;testSourceRoot/&gt;</tt> adds a single folder to the list of folders that get compiled with the test source code (test-compile).</p></li></ul></div>
+      </div>
+    </div>
+    <div class="clear">
+      <hr/>
+    </div>
+    <div id="footer">
+      <div class="xright">&#169;  
+          2007
+    
+          
+  
+
+  
+  
+  &nbsp;| Last Published: 11/06/2007
+  &nbsp;| Version: 1.2
+</div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+  </body>
+</html>
