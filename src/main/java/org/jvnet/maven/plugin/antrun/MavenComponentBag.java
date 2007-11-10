@@ -37,48 +37,48 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Wrapper object to resolve artifact.
+ * Exposes maven components to the Ant tasks.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id: ArtifactResolverWrapper.java 510478 2007-02-22 12:29:45Z vsiveton $
+ * @version $Id: MavenComponentBag.java 510478 2007-02-22 12:29:45Z vsiveton $
  */
-public class ArtifactResolverWrapper {
+final class MavenComponentBag {
     /**
      * Used for resolving artifacts
      */
-    private ArtifactResolver resolver;
+    public final ArtifactResolver resolver;
     
     /**
      * Factory for creating artifact objects
      */
-    private ArtifactFactory factory;
+    public final ArtifactFactory factory;
     
     /**
      * The local repository where the artifacts are located
      */
-    private ArtifactRepository localRepository;
+    public final ArtifactRepository localRepository;
     
     /**
      * The remote repositories where artifacts are located
      */
-    private List remoteRepositories;
+    public final List remoteRepositories;
     
     /*
      * The maven project
      */
-    private MavenProject project;
+    public final MavenProject project;
     
     /*
      * TODO: document that this is
      */
-    private ArtifactMetadataSource artifactMetadataSource;
+    public final ArtifactMetadataSource artifactMetadataSource;
     
-    /*
+    /**
      * The boolean flag that indicates whether or not to verify that the
      * resolved artifact is contained in the pom.xml file.
      * Default is 'true'.
      */
-    private boolean verifyArtifact = true;
+    public final boolean verifyArtifact = true;
 
     public final MavenProjectHelper projectHelper;
     
@@ -90,7 +90,7 @@ public class ArtifactResolverWrapper {
      * @param localRepository
      * @param remoteRepositories
      */
-    /*package*/ ArtifactResolverWrapper(
+    /*package*/ MavenComponentBag(
         ArtifactResolver resolver, 
         ArtifactFactory factory,
         ArtifactRepository localRepository, 
@@ -107,50 +107,6 @@ public class ArtifactResolverWrapper {
         this.projectHelper = projectHelper;
         this.artifactMetadataSource = artifactMetadataSource;
         INSTANCES.set(this);
-    }
-
-    protected ArtifactFactory getFactory() {
-        return factory;
-    }
-    
-    protected void setFactory( ArtifactFactory factory ) {
-        this.factory = factory;
-    }
-    
-    protected ArtifactRepository getLocalRepository() {
-        return localRepository;
-    }
-    
-    protected void setLocalRepository( ArtifactRepository localRepository ) {
-        this.localRepository = localRepository;
-    }
-    
-    protected List getRemoteRepositories() {
-        return remoteRepositories;
-    }
-    
-    protected void setRemoteRepositories( List remoteRepositories ) {
-        this.remoteRepositories = remoteRepositories;
-    }
-    
-    protected ArtifactResolver getResolver() {
-        return resolver;
-    }
-    
-    protected void setResolver( ArtifactResolver resolver ) {
-        this.resolver = resolver;
-    }
-    
-    protected void setProject(MavenProject project) {
-        this.project = project;
-    }
-    
-    public MavenProject getProject() {
-        return project;
-    }
-    
-    protected void setVerifyArtifact(String verifyArtifact) {
-        this.verifyArtifact = Boolean.parseBoolean(verifyArtifact);
     }
     
     /**
@@ -178,9 +134,9 @@ public class ArtifactResolverWrapper {
     }
     
     
-    private static final ThreadLocal<ArtifactResolverWrapper> INSTANCES = new ThreadLocal<ArtifactResolverWrapper>();
+    private static final ThreadLocal<MavenComponentBag> INSTANCES = new ThreadLocal<MavenComponentBag>();
     
-    public static ArtifactResolverWrapper get() {
+    public static MavenComponentBag get() {
         return INSTANCES.get();
     }
     
@@ -233,7 +189,7 @@ public class ArtifactResolverWrapper {
                         + " type: "+ type + " classifier: "+ classifier);
             }
         } else {
-            artifact = getFactory().createArtifactWithClassifier(groupId, artifactId, version, type, classifier);
+            artifact = factory.createArtifactWithClassifier(groupId, artifactId, version, type, classifier);
             if (verifyArtifact) {
                 // If 'true', check to see if artifact can be resolved by looking
                 // at artifacts configured in the MavenProject object via the pom.xml file
